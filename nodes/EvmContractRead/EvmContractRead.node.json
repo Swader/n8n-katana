@@ -1,0 +1,11 @@
+{
+    "node": "n8n-nodes-evm-katana.EvmContractRead",
+    "nodeVersion": "1.0",
+    "codexVersion": "1.0",
+    "categories": ["Blockchain", "Developer Tools"],
+    "resources": {
+      "primaryDocumentation": [
+        { "url": "https://docs.n8n.io/integrations/creating-nodes/build/programmatic-style-node/" }
+      ]
+    }
+  }

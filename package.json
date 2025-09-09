@@ -1,0 +1,42 @@
+{
+  "name": "n8n-nodes-evm-katana",
+  "version": "0.1.0",
+  "description": "n8n nodes for EVM reads with Katana defaults",
+  "keywords": [
+    "n8n-community-node-package",
+    "evm",
+    "katana"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint . --ext .ts"
+  },
+  "dependencies": {
+    "viem": "^2.17.0",
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "^1.80.0",
+    "n8n-core": "^1.80.0"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/EvmRpcApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/EvmContractRead/EvmContractRead.node.js",
+      "dist/nodes/EvmTokenBalance/EvmTokenBalance.node.js",
+      "dist/nodes/EvmTokenHelper/EvmTokenHelper.node.js"
+    ]
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}
