@@ -8,7 +8,7 @@ import type {
   import { NodeOperationError, NodeConnectionType } from 'n8n-workflow';
   import { makePublicClient } from '../../shared/evmClient';
   import { normalizeBigInt } from '../../shared/bigint';
-  import { getAddress, parseAbi } from 'viem';
+  import { getViem} from '../../shared/viem';
   
   export class EvmContractRead implements INodeType {
     description: INodeTypeDescription = {
@@ -95,6 +95,7 @@ import type {
     };
   
     async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+        const viem = await getViem();
       const items = this.getInputData();
       const returnData: IDataObject[] = [];
   
@@ -103,12 +104,12 @@ import type {
       const headersPairs = ((creds as any).headers?.header ?? []) as Array<{name:string,value:string}>;
       const headers = Object.fromEntries(headersPairs.filter(h => h?.name).map(h => [h.name, h.value]));
   
-      const client = makePublicClient(rpcUrl, headers);
+      const client = await makePublicClient(rpcUrl, headers);
   
       for (let i = 0; i < items.length; i++) {
         try {
           const addressRaw = this.getNodeParameter('contractAddress', i) as string;
-          const address = getAddress(addressRaw);
+          const address = viem.getAddress(addressRaw);
           const abiJson = this.getNodeParameter('abiJson', i) as string;
           const abi = JSON.parse(abiJson);
           const functionName = this.getNodeParameter('functionName', i) as string;
@@ -121,7 +122,7 @@ import type {
   
           const result = await client.readContract({
             address,
-            abi: Array.isArray(abi) ? abi : parseAbi(abi),
+            abi: Array.isArray(abi) ? abi : viem.parseAbi(abi),
             functionName,
             args,
             blockNumber,

@@ -9,7 +9,7 @@ import type {
   import { makePublicClient } from '../../shared/evmClient';
   import { normalizeBigInt } from '../../shared/bigint';
   import { erc20Abi } from '../../shared/erc20';
-  import { getAddress, formatUnits } from 'viem';
+  import { getViem} from '../../shared/viem';
   
   export class EvmTokenBalance implements INodeType {
     description: INodeTypeDescription = {
@@ -75,6 +75,7 @@ import type {
     };
   
     async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+      const viem = await getViem();
       const items = this.getInputData();
       const returnData: IDataObject[] = [];
   
@@ -82,12 +83,12 @@ import type {
       const rpcUrl = (creds as any).rpcUrl as string;
       const headersPairs = ((creds as any).headers?.header ?? []) as Array<{name:string,value:string}>;
       const headers = Object.fromEntries(headersPairs.filter(h => h?.name).map(h => [h.name, h.value]));
-      const client = makePublicClient(rpcUrl, headers);
+      const client = await makePublicClient(rpcUrl, headers);
   
       for (let i = 0; i < items.length; i++) {
         try {
           const assetType = this.getNodeParameter('assetType', i) as 'erc20'|'native';
-          const account = getAddress(this.getNodeParameter('account', i) as string);
+          const account = viem.getAddress(this.getNodeParameter('account', i) as string);
           const block = this.getNodeParameter('block', i, {}) as IDataObject;
           const blockNumber = Number(block.blockNumber) > 0 ? BigInt(block.blockNumber as number) : undefined;
           const blockTag = blockNumber ? undefined : (block.blockTag as 'latest'|'safe'|'finalized'|undefined);
@@ -99,10 +100,10 @@ import type {
               account,
               balanceRaw: bal.toString(),
               // Not formatting to ethers directly because native decimals are 18
-              balance: formatUnits(bal, 18),
+              balance: viem.formatUnits(bal, 18),
             });
           } else {
-            const token = getAddress(this.getNodeParameter('token', i) as string);
+            const token = viem.getAddress(this.getNodeParameter('token', i) as string);
             const [decimals, symbol, raw] = await Promise.all([
               client.readContract({ address: token, abi: erc20Abi, functionName: 'decimals', ...(blockNumber ? { blockNumber } : { blockTag }) }),
               client.readContract({ address: token, abi: erc20Abi, functionName: 'symbol', ...(blockNumber ? { blockNumber } : { blockTag }) }),
@@ -118,7 +119,7 @@ import type {
               balanceRaw: (raw as bigint).toString(),
             };
             const formatOutput = this.getNodeParameter('formatOutput', i) as boolean;
-            if (formatOutput) out.balance = formatUnits(raw as bigint, Number(decimals));
+            if (formatOutput) out.balance = viem.formatUnits(raw as bigint, Number(decimals));
             returnData.push(normalizeBigInt(out));
           }
         } catch (err) {

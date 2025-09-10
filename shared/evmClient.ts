@@ -1,11 +1,11 @@
-import { createPublicClient, http } from 'viem';
+import type { RequestInit } from 'node-fetch';
 
 export type RpcHeaders = Record<string, string>;
 
-export function makePublicClient(rpcUrl: string, headers?: RpcHeaders) {
+export async function makePublicClient(rpcUrl: string, headers?: RpcHeaders) {
+  const { createPublicClient, http } = await import('viem');
   const transport = http(rpcUrl, {
-    fetchOptions: headers ? { headers } : undefined,
+    fetchOptions: headers ? { headers: headers } : undefined,
   });
-  // No chain object needed for read-only calls
   return createPublicClient({ transport });
 }

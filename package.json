@@ -9,15 +9,16 @@
   ],
   "license": "MIT",
   "main": "index.js",
-  "type": "module",
   "files": [
     "dist"
   ],
   "scripts": {
     "build": "tsc",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "prepack": "npm run build && npm prune --omit=dev"
   },
   "dependencies": {
+    "node-fetch": "^3.0.0",
     "viem": "^2.17.0",
     "zod": "^3.23.8"
   },
