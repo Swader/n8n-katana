@@ -5,8 +5,9 @@ balances and contracts based on their ABI.
 
 ## TODO
 
-- [ ] Add a loadOptions method to parse ABI and populate function names from
+- [x] Add a loadOptions method to parse ABI and populate function names from
   abiJson.
+- [ ] Filter out non-const functions from EvmContractRead since it's read-only.
 - [ ] Add an optional Network Preset dropdown (Katana, mainnet, etc.), but still
   require the RPC credential.
 - [ ] Add a Multicall node (batch reads).

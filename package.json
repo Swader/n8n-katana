@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-evm-katana",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "description": "n8n nodes for EVM reads with Katana defaults",
   "keywords": [
     "n8n-community-node-package",
@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint . --ext .ts",
-    "prepack": "npm run build && npm prune --omit=dev"
+    "prepack": "npm run build && node -e \"require('fs').copyFileSync('package.json','dist/package.json')\" && npm prune --omit=dev"
   },
   "dependencies": {
     "node-fetch": "^3.0.0",
