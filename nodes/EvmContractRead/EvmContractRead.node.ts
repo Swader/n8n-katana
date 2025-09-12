@@ -11,6 +11,9 @@ import type {
   import { makePublicClient } from '../../shared/evmClient';
   import { normalizeBigInt } from '../../shared/bigint';
   import { getViem} from '../../shared/viem';
+  import { getNetworkConfig } from '../../shared/networkHelper';
+  import { getPresetOptions } from '../../shared/networkPresets';
+  import { advancedClientOptions } from '../../shared/clientConfig';
   import pkg from '../../package.json';
   const NODE_DEBUG_VERSION = `v${(pkg as any).version ?? 'unknown'}`;
 
@@ -60,6 +63,14 @@ import type {
         { name: 'evmRpcApi', required: true },
       ],
       properties: [
+        {
+          displayName: 'Network Preset',
+          name: 'networkPreset',
+          type: 'options',
+          default: 'Custom',
+          description: 'Select a network preset or use Custom for RPC from credentials',
+          options: getPresetOptions(),
+        },
         {
           displayName: 'Contract Address',
           name: 'contractAddress',
@@ -128,6 +139,7 @@ import type {
             },
           ],
         },
+        advancedClientOptions,
       ],
     };
 
@@ -185,12 +197,9 @@ import type {
       const items = this.getInputData();
       const returnData: IDataObject[] = [];
   
-      const creds = await this.getCredentials('evmRpcApi');
-      const rpcUrl = (creds as any).rpcUrl as string;
-      const headersPairs = ((creds as any).headers?.header ?? []) as Array<{name:string,value:string}>;
-      const headers = Object.fromEntries(headersPairs.filter(h => h?.name).map(h => [h.name, h.value]));
-  
-      const client = await makePublicClient(rpcUrl, headers);
+      // Get network configuration based on preset or credentials
+      const networkConfig = await getNetworkConfig(this);
+      const client = await makePublicClient(networkConfig.rpcUrl, networkConfig.headers, networkConfig);
   
       for (let i = 0; i < items.length; i++) {
         try {

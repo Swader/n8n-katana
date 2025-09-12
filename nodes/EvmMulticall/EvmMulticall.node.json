@@ -1,0 +1,18 @@
+{
+  "node": "n8n-nodes-evm-katana.EvmMulticall",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "details": "The EVM Multicall node allows you to batch multiple contract read operations into a single RPC call, significantly improving performance when reading data from multiple contracts or making multiple calls to the same contract.",
+  "categories": ["Blockchain", "Data"],
+  "resources": {
+    "primaryDocumentation": [
+      {
+        "url": "https://github.com/ruvnet/n8n-katana"
+      }
+    ]
+  },
+  "subcategories": {
+    "Blockchain": ["EVM"]
+  },
+  "alias": ["multicall", "batch", "aggregate", "ethereum", "web3"]
+}
