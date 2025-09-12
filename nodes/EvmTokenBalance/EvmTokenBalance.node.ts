@@ -10,6 +10,9 @@ import type {
   import { normalizeBigInt } from '../../shared/bigint';
   import { erc20Abi } from '../../shared/erc20';
   import { getViem} from '../../shared/viem';
+  import { getNetworkConfig } from '../../shared/networkHelper';
+  import { getPresetOptions } from '../../shared/networkPresets';
+  import { advancedClientOptions } from '../../shared/clientConfig';
   
   export class EvmTokenBalance implements INodeType {
     description: INodeTypeDescription = {
@@ -25,6 +28,14 @@ import type {
       usableAsTool: true,
       credentials: [{ name: 'evmRpcApi', required: true }],
       properties: [
+        {
+          displayName: 'Network Preset',
+          name: 'networkPreset',
+          type: 'options',
+          default: 'Custom',
+          description: 'Select a network preset or use Custom for RPC from credentials',
+          options: getPresetOptions(),
+        },
         {
           displayName: 'Asset Type',
           name: 'assetType',
@@ -71,6 +82,7 @@ import type {
           default: true,
           description: 'If true, includes a human formatted balance using decimals',
         },
+        advancedClientOptions,
       ],
     };
   
@@ -79,11 +91,9 @@ import type {
       const items = this.getInputData();
       const returnData: IDataObject[] = [];
   
-      const creds = await this.getCredentials('evmRpcApi');
-      const rpcUrl = (creds as any).rpcUrl as string;
-      const headersPairs = ((creds as any).headers?.header ?? []) as Array<{name:string,value:string}>;
-      const headers = Object.fromEntries(headersPairs.filter(h => h?.name).map(h => [h.name, h.value]));
-      const client = await makePublicClient(rpcUrl, headers);
+      // Get network configuration based on preset or credentials
+      const networkConfig = await getNetworkConfig(this);
+      const client = await makePublicClient(networkConfig.rpcUrl, networkConfig.headers, networkConfig);
   
       for (let i = 0; i < items.length; i++) {
         try {
