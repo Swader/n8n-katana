@@ -38,13 +38,16 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/EvmRpcApi.credentials.js"
+      "dist/credentials/EvmRpcApi.credentials.js",
+      "dist/credentials/EvmWalletApi.credentials.js"
     ],
     "nodes": [
       "dist/nodes/EvmContractRead/EvmContractRead.node.js",
       "dist/nodes/EvmTokenBalance/EvmTokenBalance.node.js",
       "dist/nodes/EvmTokenHelper/EvmTokenHelper.node.js",
-      "dist/nodes/EvmMulticall/EvmMulticall.node.js"
+      "dist/nodes/EvmMulticall/EvmMulticall.node.js",
+      "dist/nodes/EvmExplorerAbiFetcher/EvmExplorerAbiFetcher.node.js",
+      "dist/nodes/EvmSendTransaction/EvmSendTransaction.node.js"
     ]
   },
   "devDependencies": {
