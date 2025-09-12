@@ -217,7 +217,7 @@ export class EvmMulticall implements INodeType {
         // Process calls
         const calls = ((callsData as any).call || []) as IDataObject[];
         if (calls.length === 0) {
-          throw new NodeOperationError(this.getNode(), new Error('No calls provided'));
+          throw new NodeOperationError(this.getNode(), 'No calls provided');
         }
 
         const encodedCalls = [];
